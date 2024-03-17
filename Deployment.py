@@ -8,8 +8,8 @@ model = joblib.load("trained_model.joblib")
 # Function to make predictions
 def predict(input_data):
     input_df = pd.DataFrame([input_data])
-    predictions = model.predict(input_df)
-    return predictions[0]
+    prediction = model.predict_proba(input_df)[0][1] * 100  # Predicting probability of class 1 (diabetes)
+    return prediction
 
 # Streamlit App
 st.title("Diabetes Prediction App")
@@ -28,5 +28,4 @@ if st.sidebar.button("Predict"):
         "DiabetesPedigreeFunction": diabetes_pedigree_function
     }
     prediction = predict(input_data)
-    st.success(f"The model predicts: {prediction}")
-
+    st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
