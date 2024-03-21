@@ -24,6 +24,10 @@ insulin = st.sidebar.slider("Insulin", 0, 900, 100)
 bmi = st.sidebar.slider("BMI", 0.0, 70.0, 25.0)
 diabetes_pedigree_function = st.sidebar.slider("Diabetes Pedigree Function", 0.0, 2.0, 0.5)
 age = st.sidebar.slider("Age", 0, 120, 30)
+gender = st.sidebar.radio("Gender", ["Male", "Female"])
+hypertension = st.sidebar.selectbox("Hypertension", ["Yes", "No"])
+heart_disease = st.sidebar.selectbox("Heart Disease", ["Yes", "No"])
+smoking_history = st.sidebar.selectbox("Smoking History", ["Yes", "No"])
 
 # Make prediction on button click
 if st.sidebar.button("Predict"):
@@ -35,7 +39,12 @@ if st.sidebar.button("Predict"):
         "Insulin": insulin,
         "BMI": bmi,
         "DiabetesPedigreeFunction": diabetes_pedigree_function,
-        "Age": age
+        "Age": age,
+        "Gender": 1 if gender == "Male" else 0,
+        "Hypertension": 1 if hypertension == "Yes" else 0,
+        "HeartDisease": 1 if heart_disease == "Yes" else 0,
+        "SmokingHistory": 1 if smoking_history == "Yes" else 0
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
+
