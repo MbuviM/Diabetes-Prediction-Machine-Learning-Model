@@ -2,10 +2,11 @@ import streamlit as st
 import pandas as pd
 import joblib
 from sklearn.preprocessing import StandardScaler
+from keras.models import load_model
 import numpy as np
 
 # Load the pre-trained model
-model = joblib.load("cnn2_model.joblib")
+model = load_model("cnn2_model.joblib")
 
 # Function to preprocess input data
 def preprocess_input(input_data):
