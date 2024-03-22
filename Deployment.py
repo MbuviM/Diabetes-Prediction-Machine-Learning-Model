@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 from sklearn.preprocessing import StandardScaler
 
 # Load the pre-trained model
-model = load_model("cnn_model.joblib")
+model = load_model("cnn2_model.joblib")
 
 # Function to make predictions
 def predict(input_data):
