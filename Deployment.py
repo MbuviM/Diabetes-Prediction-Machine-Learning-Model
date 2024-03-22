@@ -1,11 +1,11 @@
 import streamlit as st
 import pandas as pd
-from keras.models import load_model
+from sklearn.externals import joblib
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 # Load the pre-trained model
-model = load_model("cnn2_model.h5")
+model = joblib.load("cnn2_model.joblib")
 
 # Function to preprocess input data
 def preprocess_input(input_data):
@@ -68,3 +68,4 @@ if st.sidebar.button("Predict"):
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
+
