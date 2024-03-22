@@ -1,28 +1,35 @@
 import streamlit as st
 import pandas as pd
-import joblib
+from keras.models import load_model
 from sklearn.preprocessing import StandardScaler
+import numpy as np
 
 # Load the pre-trained model
-model = joblib.load("cnn2_model.joblib")
-
-# Load the scaler
-scaler = joblib.load("scaler.joblib")
+model = load_model("cnn2_model.h5")
 
 # Function to preprocess input data
 def preprocess_input(input_data):
-    # Convert input data to DataFrame
-    input_df = pd.DataFrame([input_data])
-    # Scale the input data
-    input_scaled = scaler.transform(input_df)
-    return input_scaled
+    # Map gender to numerical value
+    gender_map = {"Male": 1, "Female": 2, "Others": 0}
+    input_data["Gender"] = gender_map[input_data["Gender"]]
+    
+    # Map categorical variables to numerical values
+    binary_map = {"Yes": 1, "No": 0}
+    input_data["Hypertension"] = binary_map[input_data["Hypertension"]]
+    input_data["HeartDisease"] = binary_map[input_data["HeartDisease"]]
+    
+    # Map smoking history to binary values
+    smoking_map = {"never": 0, "No Info": 0, "current": 1, "former": 1, "ever": 1, "not current": 1}
+    input_data["SmokingHistory"] = smoking_map[input_data["SmokingHistory"]]
+    
+    return np.array([[input_data[col] for col in ["Pregnancies", "Glucose", "BloodPressure", "SkinThickness",
+                                                  "Insulin", "BMI", "DiabetesPedigreeFunction", "Age",
+                                                  "Gender", "Hypertension", "HeartDisease", "SmokingHistory"]]])
 
 # Function to make predictions
 def predict(input_data):
-    # Preprocess input data
-    input_scaled = preprocess_input(input_data)
-    # Make prediction
-    prediction = model.predict(input_scaled)[0][0] * 100  # Predicting probability of class 1 (diabetes)
+    input_data_scaled = preprocess_input(input_data)
+    prediction = model.predict(input_data_scaled)[0][0] * 100  # Predicting probability of class 1 (diabetes)
     return prediction
 
 # Streamlit App
@@ -54,10 +61,10 @@ if st.sidebar.button("Predict"):
         "BMI": bmi,
         "DiabetesPedigreeFunction": diabetes_pedigree_function,
         "Age": age,
-        "Gender": 1 if gender == "Male" else (2 if gender == "Female" else 0),
-        "Hypertension": 1 if hypertension == "Yes" else 0,
-        "HeartDisease": 1 if heart_disease == "Yes" else 0,
-        "SmokingHistory": 1 if smoking_history in ['current', 'former', 'ever', 'not current'] else 0
+        "Gender": gender,
+        "Hypertension": hypertension,
+        "HeartDisease": heart_disease,
+        "SmokingHistory": smoking_history
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
