@@ -3,7 +3,7 @@ import joblib
 import pandas as pd
 
 # Load the pre-trained model
-model = joblib.load("trained_model.joblib")
+model = joblib.load("cnn_model.joblib")
 
 # Function to make predictions
 def predict(input_data):
