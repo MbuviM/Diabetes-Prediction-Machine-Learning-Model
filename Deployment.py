@@ -1,10 +1,11 @@
 import streamlit as st
 import pandas as pd
 from keras.models import load_model
+import joblib
 from sklearn.preprocessing import StandardScaler
 
 # Load the pre-trained model
-model = load_model("cnn2_model.h5")
+model = joblib.load("cnn2_model.joblib")
 
 # Function to make predictions
 scaler = StandardScaler()
