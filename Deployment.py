@@ -4,7 +4,7 @@ from keras.models import load_model
 from sklearn.preprocessing import StandardScaler
 
 # Load the pre-trained model
-model = load_model("cnn2_model.joblib")
+model = load_model("cnn2_model.h5")
 
 # Function to make predictions
 def predict(input_data):
