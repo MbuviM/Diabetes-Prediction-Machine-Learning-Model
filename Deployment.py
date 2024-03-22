@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from sklearn.externals import joblib
+import joblib
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
