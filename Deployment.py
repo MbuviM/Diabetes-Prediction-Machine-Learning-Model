@@ -6,7 +6,7 @@ from keras.models import load_model
 import numpy as np
 
 # Load the pre-trained model
-model = load_model("cnn2_model.joblib")
+model = joblib.load("cnn2_model.joblib")
 
 # Function to preprocess input data
 def preprocess_input(input_data):
