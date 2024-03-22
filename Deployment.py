@@ -7,10 +7,15 @@ from sklearn.preprocessing import StandardScaler
 model = load_model("cnn2_model.h5")
 
 # Function to make predictions
-def predict(input_data):
-    scaler = StandardScaler()
+scaler = StandardScaler()
+
+def preprocess_input(input_data):
     input_df = pd.DataFrame([input_data])
-    input_scaled = scaler.fit_transform(input_df)
+    input_scaled = scaler.transform(input_df)
+    return input_scaled
+
+def predict(input_data):
+    input_scaled = preprocess_input(input_data)
     prediction = model.predict(input_scaled)[0][0] * 100  # Predicting probability of class 1 (diabetes)
     return prediction
 
@@ -43,13 +48,14 @@ if st.sidebar.button("Predict"):
         "BMI": bmi,
         "DiabetesPedigreeFunction": diabetes_pedigree_function,
         "Age": age,
-        "Gender": 1 if gender == "Male" else (2 if gender == "Female" else 0),
+        "Gender_Male": 1 if gender == "Male" else 0,
+        "Gender_Female": 1 if gender == "Female" else 0,
         "Hypertension": 1 if hypertension == "Yes" else 0,
         "HeartDisease": 1 if heart_disease == "Yes" else 0,
-        "SmokingHistory": 1 if smoking_history in ['current', 'former', 'ever', 'not current'] else 0
+        "SmokingHistory_current": 1 if smoking_history == "current" else 0,
+        "SmokingHistory_former": 1 if smoking_history == "former" else 0,
+        "SmokingHistory_ever": 1 if smoking_history == "ever" else 0,
+        "SmokingHistory_not_current": 1 if smoking_history == "not current" else 0
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
-
-
-
