@@ -1,22 +1,27 @@
 import streamlit as st
 import pandas as pd
-from keras.models import load_model
 import joblib
 from sklearn.preprocessing import StandardScaler
 
 # Load the pre-trained model
 model = joblib.load("cnn2_model.joblib")
 
-# Function to make predictions
-scaler = StandardScaler()
+# Load the scaler
+scaler = joblib.load("scaler.joblib")
 
+# Function to preprocess input data
 def preprocess_input(input_data):
+    # Convert input data to DataFrame
     input_df = pd.DataFrame([input_data])
+    # Scale the input data
     input_scaled = scaler.transform(input_df)
     return input_scaled
 
+# Function to make predictions
 def predict(input_data):
+    # Preprocess input data
     input_scaled = preprocess_input(input_data)
+    # Make prediction
     prediction = model.predict(input_scaled)[0][0] * 100  # Predicting probability of class 1 (diabetes)
     return prediction
 
@@ -49,14 +54,10 @@ if st.sidebar.button("Predict"):
         "BMI": bmi,
         "DiabetesPedigreeFunction": diabetes_pedigree_function,
         "Age": age,
-        "Gender_Male": 1 if gender == "Male" else 0,
-        "Gender_Female": 1 if gender == "Female" else 0,
+        "Gender": 1 if gender == "Male" else (2 if gender == "Female" else 0),
         "Hypertension": 1 if hypertension == "Yes" else 0,
         "HeartDisease": 1 if heart_disease == "Yes" else 0,
-        "SmokingHistory_current": 1 if smoking_history == "current" else 0,
-        "SmokingHistory_former": 1 if smoking_history == "former" else 0,
-        "SmokingHistory_ever": 1 if smoking_history == "ever" else 0,
-        "SmokingHistory_not_current": 1 if smoking_history == "not current" else 0
+        "SmokingHistory": 1 if smoking_history in ['current', 'former', 'ever', 'not current'] else 0
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
