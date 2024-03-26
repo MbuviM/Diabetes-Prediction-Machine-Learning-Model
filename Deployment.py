@@ -10,46 +10,28 @@ model = joblib.load("model.joblib")
 # Function to preprocess input data
 def preprocess_input(input_data):
     # Map gender to numerical value
-    gender_map = {"Male": 1, "Female": 2, "Others": 0}
-    input_data["gender"] = gender_map[input_data["gender"]]
-    
-    # Map hypertension to numerical value
-    hypertension_map = {"Yes": 1, "No": 0}
-    input_data["hypertension"] = hypertension_map[input_data["hypertension"]]
-    
-    # Map heart disease to numerical value
-    heart_disease_map = {"Yes": 1, "No": 0}
-    input_data["heart_disease"] = heart_disease_map[input_data["heart_disease"]]
+    gender_map = {"Male": 1, "Female": 0, "Others": 0}  # Assuming Male=1, Female=0, Others=0
+    input_data["gender_Male"] = gender_map[input_data["gender"]]
+    input_data["gender_Other"] = 1 if input_data["gender"] == "Others" else 0
     
     # Map smoking history to numerical value
-    smoking_history_map = {"never": 0, "No Info": 0, "current": 1, "former": 1, "ever": 1, "not current": 1}
-    input_data["smoking_history"] = smoking_history_map[input_data["smoking_history"]]
+    smoking_history_map = {"never": 1, "No Info": 1, "current": 1, "former": 1, "ever": 1, "not current": 1}  # Assuming all are 1
+    input_data["smoking_history_current"] = smoking_history_map[input_data["smoking_history"]]
+    input_data["smoking_history_ever"] = 1  # Assuming all are 1
+    input_data["smoking_history_former"] = 1  # Assuming all are 1
+    input_data["smoking_history_never"] = 1  # Assuming all are 1
+    input_data["smoking_history_not current"] = 1  # Assuming all are 1
     
-    # Encode categorical variables
-    encoded_gender = [0, 0]  # Initialize encoded gender features
-    if input_data["gender"] == 1:  # Male
-        encoded_gender[0] = 1
-    elif input_data["gender"] == 2:  # Female
-        encoded_gender[1] = 1
+    # Drop unused columns
+    input_data.drop(columns=["gender", "smoking_history"], inplace=True)
     
-    encoded_smoking_history = [0, 0, 0, 0, 0]  # Initialize encoded smoking history features
-    if input_data["smoking_history"] == "current":
-        encoded_smoking_history[0] = 1
-    elif input_data["smoking_history"] == "former":
-        encoded_smoking_history[1] = 1
-    elif input_data["smoking_history"] == "ever":
-        encoded_smoking_history[2] = 1
-    elif input_data["smoking_history"] == "not current":
-        encoded_smoking_history[3] = 1
-    
-    return np.array([[input_data["gender"], input_data["age"], input_data["hypertension"], input_data["heart_disease"],
-                      input_data["smoking_history"], input_data["bmi"], input_data["HbA1c_level"],
-                      input_data["blood_glucose_level"]] + encoded_gender + encoded_smoking_history])
+    return input_data
 
 # Function to make predictions
 def predict(input_data):
-    input_data_scaled = preprocess_input(input_data)
-    prediction = model.predict(input_data_scaled)[0][0] * 100  # Predicting probability of class 1 (diabetes)
+    input_data_processed = preprocess_input(input_data)
+    input_data_scaled = scaler.transform(input_data_processed)  # Assuming 'scaler' is defined
+    prediction = model.predict(input_data_scaled)[0] * 100  # Predicting probability of class 1 (diabetes)
     return prediction
 
 # Streamlit App
@@ -80,6 +62,7 @@ if st.sidebar.button("Predict"):
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
+
 
 
 
