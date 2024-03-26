@@ -7,9 +7,7 @@ import numpy as np
 # Load the pre-trained model
 model = joblib.load("model.joblib")
 
-# Load the scaler
-scaler = joblib.load("scaler.joblib")  # Assuming you have saved the scaler object
-
+scaler = StandardScaler()
 # Function to preprocess input data
 def preprocess_input(input_data):
     input_df = pd.DataFrame([input_data])  # Convert input dictionary to DataFrame
@@ -34,7 +32,7 @@ def preprocess_input(input_data):
 # Function to make predictions
 def predict(input_data):
     input_data_processed = preprocess_input(input_data)
-    input_data_scaled = scaler.transform(input_data_processed)  # Using the loaded scaler object
+    input_data_scaled = scaler.transform(input_data_processed)  # Assuming 'scaler' is defined
     prediction = model.predict(input_data_scaled)[0] * 100  # Predicting probability of class 1 (diabetes)
     return prediction
 
@@ -66,7 +64,6 @@ if st.sidebar.button("Predict"):
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
-
 
 
 
