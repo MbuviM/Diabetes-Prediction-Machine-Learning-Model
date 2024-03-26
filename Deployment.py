@@ -9,23 +9,24 @@ model = joblib.load("model.joblib")
 
 # Function to preprocess input data
 def preprocess_input(input_data):
+    input_df = pd.DataFrame([input_data])  # Convert input dictionary to DataFrame
     # Map gender to numerical value
     gender_map = {"Male": 1, "Female": 0, "Others": 0}  # Assuming Male=1, Female=0, Others=0
-    input_data["gender_Male"] = gender_map[input_data["gender"]]
-    input_data["gender_Other"] = 1 if input_data["gender"] == "Others" else 0
+    input_df["gender_Male"] = input_df["gender"].map(gender_map)
+    input_df["gender_Other"] = (input_df["gender"] == "Others").astype(int)
     
     # Map smoking history to numerical value
     smoking_history_map = {"never": 1, "No Info": 1, "current": 1, "former": 1, "ever": 1, "not current": 1}  # Assuming all are 1
-    input_data["smoking_history_current"] = smoking_history_map[input_data["smoking_history"]]
-    input_data["smoking_history_ever"] = 1  # Assuming all are 1
-    input_data["smoking_history_former"] = 1  # Assuming all are 1
-    input_data["smoking_history_never"] = 1  # Assuming all are 1
-    input_data["smoking_history_not current"] = 1  # Assuming all are 1
+    input_df["smoking_history_current"] = input_df["smoking_history"].map(smoking_history_map)
+    input_df["smoking_history_ever"] = 1  # Assuming all are 1
+    input_df["smoking_history_former"] = 1  # Assuming all are 1
+    input_df["smoking_history_never"] = 1  # Assuming all are 1
+    input_df["smoking_history_not current"] = 1  # Assuming all are 1
     
     # Drop unused columns
-    input_data.drop(columns=["gender", "smoking_history"], inplace=True)
+    input_df.drop(columns=["gender", "smoking_history"], inplace=True)
     
-    return input_data
+    return input_df
 
 # Function to make predictions
 def predict(input_data):
@@ -62,6 +63,7 @@ if st.sidebar.button("Predict"):
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
+
 
 
 
