@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import joblib
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 # Load the pre-trained model
@@ -11,11 +12,6 @@ def preprocess_input(input_data):
     # Map gender to numerical value
     gender_map = {"Male": 1, "Female": 2, "Others": 0}
     input_data["gender"] = gender_map[input_data["gender"]]
-    
-    # Map categorical variables to numerical values
-    binary_map = {"Yes": 1, "No": 0}
-    input_data["hypertension"] = binary_map[input_data["hypertension"]]
-    input_data["heart_disease"] = binary_map[input_data["heart_disease"]]
     
     # Map smoking history to binary values
     smoking_map = {"never": 0, "No Info": 0, "current": 1, "former": 1, "ever": 1, "not current": 1}
@@ -59,5 +55,6 @@ if st.sidebar.button("Predict"):
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
+
 
 
