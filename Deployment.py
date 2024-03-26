@@ -32,7 +32,7 @@ def preprocess_input(input_data):
 # Function to make predictions
 def predict(input_data):
     input_data_processed = preprocess_input(input_data)
-    input_data_scaled = scaler.transform(input_data_processed)  # Assuming 'scaler' is defined
+    input_data_scaled = scaler.fit_transform(input_data_processed)  # Assuming 'scaler' is defined
     prediction = model.predict(input_data_scaled)[0] * 100  # Predicting probability of class 1 (diabetes)
     return prediction
 
