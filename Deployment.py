@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import joblib
 from sklearn.preprocessing import StandardScaler
-from keras.models import load_model
 import numpy as np
 
 # Load the pre-trained model
@@ -12,20 +11,24 @@ model = joblib.load("model.joblib")
 def preprocess_input(input_data):
     # Map gender to numerical value
     gender_map = {"Male": 1, "Female": 2, "Others": 0}
-    input_data["gender"] = gender_map[input_data["gender"]]
+    input_data["gender"] = gender_map.get(input_data["gender"], 0)  # Default to 0 if gender not found
     
     # Map categorical variables to numerical values
     binary_map = {"Yes": 1, "No": 0}
-    input_data["hypertension"] = binary_map[input_data["hypertension"]]
-    input_data["heart_disease"] = binary_map[input_data["heart_disease"]]
+    input_data["hypertension"] = binary_map.get(input_data["hypertension"], 0)
+    input_data["heart_disease"] = binary_map.get(input_data["heart_disease"], 0)
     
     # Map smoking history to binary values
     smoking_map = {"never": 0, "No Info": 0, "current": 1, "former": 1, "ever": 1, "not current": 1}
-    input_data["smoking_history"] = smoking_map[input_data["smoking_history"]]
+    input_data["smoking_history"] = smoking_map.get(input_data["smoking_history"], 0)
     
-    return np.array([[input_data[col] for col in ["gender", "age", "hypertension", "heart_disease",
-                                                  "smoking_history", "bmi", "HbA1c_level",
-                                                  "blood_glucose_level"]]])
+    # Encode gender and smoking history
+    gender_encoded = [1 if input_data["gender"] == i else 0 for i in range(3)]
+    smoking_encoded = [1 if input_data["smoking_history"] == i else 0 for i in range(6)]
+    
+    return np.array([[input_data["age"], input_data["hypertension"], input_data["heart_disease"],
+                      input_data["bmi"], input_data["HbA1c_level"], input_data["blood_glucose_level"]] +
+                     gender_encoded + smoking_encoded])
 
 # Function to make predictions
 def predict(input_data):
@@ -61,3 +64,4 @@ if st.sidebar.button("Predict"):
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
+
