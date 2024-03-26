@@ -32,7 +32,7 @@ def preprocess_input(input_data):
 # Function to make predictions
 def predict(input_data):
     input_data_scaled = preprocess_input(input_data)
-    print("Processed input data:", input_data_scaled)  # Debugging statement
+    print("Number of features in input data:", input_data_scaled.shape[1])  # Debugging statement
     prediction = model.predict(input_data_scaled)[0][0] * 100  # Predicting probability of class 1 (diabetes)
     return prediction
 
@@ -64,6 +64,7 @@ if st.sidebar.button("Predict"):
     }
     prediction = predict(input_data)
     st.success(f"The risk of you getting diabetes is {prediction:.2f}%")
+
 
 
 
