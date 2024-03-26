@@ -3,7 +3,7 @@ import joblib
 import numpy as np
 
 # Load the pre-trained model
-model = joblib.load("model.joblib")
+model = joblib.load("trained_model.joblib")
 
 # Function to preprocess input data
 def preprocess_input(input_data):
