@@ -25,7 +25,7 @@ def preprocess_input(input_data):
     
     return np.array([[input_data[col] for col in ["Pregnancies", "Glucose", "BloodPressure", "SkinThickness",
                                                   "Insulin", "BMI", "DiabetesPedigreeFunction", "Age",
-                                                  "Gender", "Hypertension", "HeartDisease", "SmokingHistory"]]])
+                                                  "Gender", "Hypertension", "HeartDisease", "SmokingHistory", "	HbA1c_level"]]])
 
 # Function to make predictions
 def predict(input_data):
